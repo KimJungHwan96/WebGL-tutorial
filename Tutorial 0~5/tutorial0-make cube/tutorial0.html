@@ -1,0 +1,308 @@
+<!--
+WebGL 1.0 Tutorial0 - Make Cube using triangles.
+
+(CC-NC-BY) WON WOO LEE 2019
+
+(201420916 이원우 소프트웨어학과)
+
+@author Won Woo Lee
+
+참고사이트: 
+@https://www.w3schools.com/html/default.asp
+-->
+
+<html>
+
+<head>
+<title>Tutorial 0 : Basic cube operation code</title>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<script type="text/javascript" src="tutorial0.js">
+</script>
+
+
+</head>
+<body onload=main()>
+&nbsp; Tutorial 0 : Basic cube operation code<br>
+
+
+<div id="makeCube" class="tabcontent" >
+
+	<h2>Basic cube operation code</h2>
+	
+</div>
+
+	<table>
+		<tr>
+			<td>
+				<canvas id="helloapicanvas" style="border: none;" width="500" height="500"></canvas><!--It's where graphics are displayed.-->
+			</td>
+			<td>
+				<div style="overflow:scroll; width:1000px; height:600px; background-color: gray; color:white;"><!--//Scroll view to express code-->
+					&nbsp;// Tutorial 0 : Basic cube operation code<br>
+					&nbsp;var gl;<br>
+					&nbsp;var EPSILON = 0.000001;<br>
+					&nbsp; var arrCount=0; <br>
+					&nbsp; var flag=0;<br>
+					&nbsp; var mov_matrix=new Array();<br>
+					&nbsp; function testGLError(functionLastCalled) {<br>
+					&nbsp; var lastError = gl.getError();<br>
+					&nbsp; if (lastError != gl.NO_ERROR) {<br>
+					&nbsp; alert(functionLastCalled + " failed (" + lastError + ")");<br>
+					&nbsp; return false;<br>
+					&nbsp; }<br>
+					&nbsp; return true;<br>
+					&nbsp; }<br>
+
+
+
+					&nbsp; function initialiseGL(canvas) {<br>
+					&nbsp;	try {<br>
+					&nbsp;	// Try to grab the standard context. If it fails, fallback to experimental<br>
+					&nbsp;	gl = canvas.getContext("webgl")<br>
+					&nbsp;	|| canvas.getContext("experimental-webgl");<br>
+					&nbsp;	gl.viewport(0,0, canvas.width, canvas.height);<br>
+					&nbsp;	}<br>
+					&nbsp;	catch (e) {<br>
+					&nbsp;	}<br>
+
+					&nbsp;	if (!gl) {<br>
+					&nbsp;	alert("Unable to initialise WebGL. Your browser may not support it");<br>
+					&nbsp;	return false;<br>
+					&nbsp;	}<br>
+					&nbsp;<br>
+					&nbsp;	return true;<br>
+					&nbsp;	}<br>
+					&nbsp;<br>
+					&nbsp;	var shaderProgram;<br>
+
+
+
+					&nbsp;	function initialiseBuffer() {<br>
+					&nbsp;	// Generate a buffer object<br>
+
+					&nbsp;	var vertexData = [<br>
+					<div style="background-color: white; color:black;" >&nbsp; //(x, y, z, r,g,b,a);<br></div> <!--vertex for triangles-->
+						<div id="cubeFront1" style="background-color: green; color:red;"></div>
+						<div id="cubeFront2" style="background-color: green; color:red;"></div>
+						<div id="cubeBack1" style="background-color: green; color:red;"></div>
+						<div id="cubeBack2" style="background-color: green; color:red;"></div>
+						<div id="cubeBottom1" style="background-color: green; color:red;"></div>
+						<div id="cubeBottom2" style="background-color: green; color:red;"></div>
+						<div id="cubeTop1" style="background-color: green; color:red;"></div>
+						<div id="cubeTop2" style="background-color: green; color:red;"></div>
+						<div id="cubeLeft1" style="background-color: green; color:red;"></div>
+						<div id="cubeLeft2" style="background-color: green; color:red;"></div>
+						<div id="cubeRight1" style="background-color: green; color:red;"></div>
+						<div id="cubeRight2" style="background-color: green; color:red;"></div>
+
+					&nbsp;	];<br>
+
+					&nbsp;	gl.vertexBuffer = gl.createBuffer();<br>
+
+					&nbsp;	// Bind buffer as a vertex buffer so we can fill it with data<br>
+					&nbsp;	gl.bindBuffer(gl.ARRAY_BUFFER, gl.vertexBuffer);<br>
+
+					&nbsp;	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexData), gl.STATIC_DRAW);<br>
+					&nbsp;	return testGLError("initialiseBuffers");<br>
+					&nbsp;	}<br>
+
+					<div style="background-color: white; color:black;" >&nbsp; //for make identity matrix;<br></div>
+					&nbsp; function identity$3(out) {<br>
+					&nbsp;out[0] = 1;<br>
+					&nbsp;out[1] = 0;<br>
+					&nbsp;out[2] = 0;<br>
+					&nbsp;out[3] = 0;<br>
+					&nbsp;out[4] = 0;<br>
+					&nbsp;out[5] = 1;<br>
+					&nbsp;out[6] = 0;<br>
+					&nbsp;out[7] = 0;<br>
+					&nbsp;out[8] = 0;<br>
+					&nbsp;out[9] = 0;<br>
+					&nbsp;out[10] = 1;<br>
+					&nbsp;out[11] = 0;<br>
+					&nbsp;out[12] = 0;<br>
+					&nbsp;out[13] = 0;<br>
+					&nbsp;out[14] = 0;<br>
+					&nbsp;out[15] = 1;<br>
+					&nbsp;return out;<br>
+					&nbsp;}<br>
+
+					<div style="background-color: white; color:black;" >&nbsp; //function for rotate matrix;<br></div>
+					<div id="rotatecode" style="color:red; background-color: green;"></div>
+					&nbsp;<br>
+					&nbsp;<br>
+					&nbsp;<br>
+					&nbsp;	function initialiseShaders() {<br>
+					&nbsp;	var fragmentShaderSource = '\<br>
+					&nbsp;	varying highp vec4 color; \<br>
+					&nbsp;	void main(void) \<br>
+					&nbsp;	{ \<br>
+					&nbsp;	gl_FragColor = color; \<br>
+					&nbsp;	}';<br>
+					&nbsp;	gl.fragShader = gl.createShader(gl.FRAGMENT_SHADER);<br>
+					&nbsp;	gl.shaderSource(gl.fragShader, fragmentShaderSource);<br>
+					&nbsp;	gl.compileShader(gl.fragShader);<br>
+					&nbsp;	var vertexShaderSource = '\<br>
+					&nbsp;	attribute highp vec4 myVertex; \<br>
+					&nbsp;	attribute highp vec4 myColor; \<br>
+					&nbsp;	uniform mediump mat4 Mmatrix; \<br>
+					&nbsp;	varying highp vec4 color; \<br>
+					&nbsp;	void main(void)  \<br>
+					&nbsp;	{ \<br>
+					&nbsp;	gl_Position = Mmatrix * myVertex; \<br>
+					&nbsp;	color = myColor; \<br>
+					&nbsp;	}';<br>
+					&nbsp;<br>
+					&nbsp;	// Create the vertex shader object<br>
+					&nbsp;	gl.vertexShader = gl.createShader(gl.VERTEX_SHADER);<br>
+					&nbsp;<br>
+					&nbsp;	// Load the source code into it<br>
+					&nbsp;	gl.shaderSource(gl.vertexShader, vertexShaderSource);<br>
+					&nbsp;<br>
+					&nbsp;	// Compile the source code<br>
+					&nbsp;	gl.compileShader(gl.vertexShader);<br>
+					&nbsp;<br>
+					&nbsp;	// Check if compilation succeeded<br>
+					&nbsp;	if (!gl.getShaderParameter(gl.vertexShader, gl.COMPILE_STATUS)) {<br>
+					&nbsp;	// It didn't. Display the info log as to why<br>
+					&nbsp;	alert("Failed to compile the vertex shader.\n" + gl.getShaderInfoLog(gl.vertexShader));<br>
+					&nbsp;	return false;<br>
+					&nbsp;	}<br>
+					&nbsp;<br>
+					&nbsp;	// Create the shader program<br>
+					&nbsp;	gl.programObject = gl.createProgram();<br>
+					&nbsp;<br>
+					&nbsp;	// Attach the fragment and vertex shaders to it<br>
+					&nbsp;	gl.attachShader(gl.programObject, gl.fragShader);<br>
+					&nbsp;	gl.attachShader(gl.programObject, gl.vertexShader);<br>
+					&nbsp;<br>
+					&nbsp;	// Bind the custom vertex attribute "myVertex" to location 0<br>
+					&nbsp;	gl.bindAttribLocation(gl.programObject, 0, "myVertex");<br>
+					&nbsp;<br>
+					&nbsp;	// Link the program<br>
+					&nbsp;	gl.linkProgram(gl.programObject);<br>
+					&nbsp;<br>
+					&nbsp;	// Check if linking succeeded in a similar way we checked for compilation errors<br>
+					&nbsp;	if (!gl.getProgramParameter(gl.programObject, gl.LINK_STATUS)) {<br>
+					&nbsp;	alert("Failed to link the program.\n" + gl.getProgramInfoLog(gl.programObject));<br>
+					&nbsp;	return false;<br>
+					&nbsp;	}<br>
+					&nbsp;<br>
+					&nbsp;	gl.useProgram(gl.programObject);<br>
+					&nbsp;<br>
+					&nbsp;	return testGLError("initialiseShaders");<br>
+					&nbsp;	}<br>
+					&nbsp;<br>
+					&nbsp;var rot_value = 0;<br>
+					&nbsp;identity$3(mov_matrix);<br>
+					&nbsp;	function addTri() {<br>
+					&nbsp;	if(arrCount<36){<br>
+					&nbsp;	arrCount+=3;<br>
+					&nbsp;	}<br>
+					&nbsp;<br>
+					&nbsp;	}<br>
+					&nbsp;<br>
+					&nbsp;	var rot_value = 0.0;<br> //The angle of the rotates. The bigger, the faster.
+					&nbsp;<br>
+					&nbsp;	function renderScene() {<br>
+					&nbsp;<br>
+					&nbsp;	rotAxis = [1,1,0];<br>
+					&nbsp;<br>
+					&nbsp;	gl.enable(gl.DEPTH_TEST);<br>
+					&nbsp;	gl.depthFunc(gl.LEQUAL);<br>
+					&nbsp;<br>
+					&nbsp;	gl.clearColor(0.6, 0.8, 1.0, 1.0);<br>
+					&nbsp;	gl.clearDepth(1.0);<br>
+					&nbsp;	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);<br>
+					&nbsp;<br>
+					&nbsp;<br>
+					&nbsp;	var Mmatrix = gl.getUniformLocation(gl.programObject, "Mmatrix");<br>
+					&nbsp;<br>
+					&nbsp;	rot_value=0.01;<br>
+					<div id="rotate3" style="background-color: green;color:red;"></div>
+					&nbsp;<br>
+					&nbsp;	// Pass the identity transformation matrix to the shader using its location<br>
+					&nbsp;	gl.uniformMatrix4fv(Mmatrix, gl.FALSE, mov_matrix);<br>
+					&nbsp;<br>
+					&nbsp;	if (!testGLError("gl.uniformMatrix4fv")) {<br>
+					&nbsp;	return false;<br>
+					&nbsp;	}<br>
+					&nbsp;<br>
+					&nbsp;	gl.enableVertexAttribArray(0);<br>
+					&nbsp;	gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 28, 0);<br>
+					&nbsp;	gl.enableVertexAttribArray(1);<br>
+					&nbsp;	gl.vertexAttribPointer(1, 4, gl.FLOAT, gl.FALSE, 28, 12);<br>
+					&nbsp;<br>
+					&nbsp;	if (!testGLError("gl.vertexAttribPointer")) {<br>
+					&nbsp;	return false;<br>
+					&nbsp;	}<br>
+					&nbsp;<br>
+					&nbsp;<br>
+					&nbsp;<br>
+					<div style="background-color: white; color:black;" >&nbsp; //The count value of gl.array is equal to the number of rows in vertex.<br></div>
+					<div id="arrCount1">&nbsp;gl.drawArrays(gl.TRIANGLES, 0, 0);<br></div>
+					<div id="arrCount2" style="background-color: green; color:red;"></div>
+					&nbsp;<br>
+					&nbsp;	if (!testGLError("gl.drawArrays")) {<br>
+					&nbsp;	return false;<br>
+					&nbsp;	}<br>
+					&nbsp;<br>
+					&nbsp;	return true;<br>
+					&nbsp;	}<br>
+					&nbsp;<br>
+					&nbsp;<br>
+					&nbsp;<br>
+					&nbsp;	function main() {<br>
+					&nbsp;	var canvas = document.getElementById("helloapicanvas");<br>
+					&nbsp;<br>
+					&nbsp;	if (!initialiseGL(canvas)) {<br>
+					&nbsp;	return;<br>
+					&nbsp;	}<br>
+					&nbsp;<br>
+					&nbsp;	if (!initialiseBuffer()) {<br>
+					&nbsp;	return;<br>
+					&nbsp;	}<br>
+					&nbsp;<br>
+					&nbsp;	if (!initialiseShaders()) {<br>
+					&nbsp;	return;<br>
+					&nbsp;	}<br>
+					&nbsp;<br>
+					&nbsp;<br>
+					&nbsp;	// Render loop<br>
+					&nbsp;	requestAnimFrame = (function () {<br>
+					&nbsp;	return window.requestAnimationFrame ||<br>
+					&nbsp;	window.webkitRequestAnimationFrame ||<br>
+					&nbsp;	window.mozRequestAnimationFrame ||<br>
+					&nbsp;	function (callback){<br>
+					&nbsp;	window.setTimeout(callback, 1000, 60);<br>
+					&nbsp;	};<br>
+					&nbsp;	})();<br>
+					&nbsp;<br>
+					&nbsp;	(function renderLoop() {<br>
+					&nbsp;	if (renderScene()) {<br>
+					&nbsp;	// Everything was successful, request that we redraw our scene again in the future<br>
+					&nbsp;	requestAnimFrame(renderLoop);<br>
+					&nbsp;	}<br>
+					&nbsp;	})();<br>
+					&nbsp;	}<br>
+
+
+				</div>
+			</td>
+		</tr>
+	</table>
+
+
+
+
+	 <button onclick="addTri()" id="addTri">addTriangle</button><button onclick="delTri()" id="delTri">deleteTriangle</button><br><button onclick="doRotate()">rotate</button><button onclick="stopRotate()">stop rotate</button><br> <!--??? ?? ?????.-->
+</div>
+
+
+
+</body>
+</html>
+<style>
+
+
+</style>

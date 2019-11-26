@@ -1,0 +1,120 @@
+/*
+WebGL 1.0 Tutorial1 - Rotating and translation Cube
+
+(CC-NC-BY) JungYeun Won 2019
+
+(201620955 원정연 소프트웨어학과)
+
+@author JungYeun Won
+
+참고사이트: 
+@https://www.w3schools.com/howto/howto_js_tabs.asp
+@https://threejs.org/examples/webgl_postprocessing_afterimage.html
+*/
+
+body {
+  padding: 30px;
+  background: #ebf9ff
+}
+
+.layout-td {
+    padding: 20px;
+    /* background: pink; */
+    vertical-align: top;
+}
+
+.cont_btn {
+    border: 1px solid #8795d3;
+    background-color: #dde4ff;
+    outline: none;
+    cursor: pointer;
+    padding: 10px 12px;
+    margin: 5px;
+}
+
+
+.tab {
+    overflow: hidden;
+    border: 1px solid #8795d3;
+    background-color: #d0d9ff;
+  }
+
+  .tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-weight: bold;
+  }
+  
+  /* Change background color of buttons on hover */
+  .tab button:hover {
+    background-color: #9ba9e5;
+  }
+  
+  /* Create an active/current tablink class */
+  .tab button.active {
+    background-color: #8795d3;
+  }
+
+  .tabcontent {
+    display: none;
+    padding: 6px 12px;
+    animation: fadeEffect 1s; /* Fading effect takes 1 second */
+  }
+
+  /* Go from zero to full opacity */
+  @keyframes fadeEffect {
+    from {opacity: 0;}
+    to {opacity: 1;}
+  }
+
+  .slider {
+    -webkit-appearance: none;  /* Override default CSS styles */
+    appearance: none;
+    width: 100%; /* Full-width */
+    height: 10px; /* Specified height */
+    background: #d0d9ff; /* Grey background */
+    outline: none; /* Remove outline */
+    opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+    -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+    transition: opacity .2s;
+  }
+
+  .slider:hover {
+    opacity: 1; /* Fully shown on mouse-over */
+  }
+
+
+.cont_btn2 {
+  border: 1px solid #4f98c2;
+  background-color: #bfe4fc;
+  outline: none;
+  cursor: pointer;
+  padding: 10px 12px;
+  margin: 5px;
+}
+
+.cont_btn2:hover {
+  background-color: #9cd5fc;
+}
+
+#code-box {
+  visibility: hidden;
+  width: 450px;
+  height: 600px;
+  background: #daf1ff;
+  border: 1px solid #4f98c2;
+  margin: 5px;
+  padding: 10px;
+  overflow:scroll;
+}
+
+#code-content {
+  font-size: 15px;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}

@@ -1,0 +1,319 @@
+<!--
+WebGL 1.0 Tutorial4 - Phong Shading
+CC-NC-BY SeongHeon Kim (201421109)
+
+@author SeongHeon Kim
+@date 2019-06-22
+
+@WebGL applet by Prof. Thorsten Thormahlen. Modified by SeongHeon Kim for educational purpose
+@http://www.mathematik.uni-marburg.de/~thormae/lectures/graphics1/code/WebGLShaderLightMat/ShaderLightMat.html
+-->
+
+<html>
+
+<head>
+<title>Tutorial5 : Gouraud Shading</title>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+<script type="text/javascript" src="tutorial5.js"> </script>
+
+<!-- change mode script -->
+<script type="text/javascript">
+function modeChanged() {
+  var mode = document.getElementById("select_mode").value;
+  modeVal = mode;
+}
+</script>
+
+<!-- slider style -->
+<style>
+.slidecontainer {
+  width: 100%;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 25px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  background: #4CAF50;
+  cursor: pointer;
+}
+</style>
+
+<!-- tab style -->
+<style>
+body {font-family: Arial;}
+
+/* Style the tab */
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+</style>
+
+</head>
+
+
+<body onload="main()">
+
+  <h1>WebGL Project: Gouraud Shading tutorial</h1>
+
+  <div style="max-width: 550px;">
+    <p>
+      This project is webGL shading tutorial.<br>
+      You can learn about Gouraud shading by selecting each component.
+    </p>
+  </div>
+
+  <h3>Functions</h3>
+  <p>Click and check function which tutorial provide:</p>
+
+  <!-- tab -->
+  <div class="tab">
+    <button class="tablinks" onclick="openCity(event, 'Animation')">Animation</button>
+    <button class="tablinks" onclick="openCity(event, 'Mode')">Mode</button>
+    <button class="tablinks" onclick="openCity(event, 'Coefficient')">Coefficient</button>
+    <button class="tablinks" onclick="openCity(event, 'Code')">Code</button>
+  </div>
+
+  <div id="Animation" class="tabcontent">
+    <h3>Animation</h3>
+    <p>To start or stop rotating using 'Animation Rotate' and 'Stop Rotate' button. </p>
+  </div>
+
+  <div id="Mode" class="tabcontent">
+    <h3>Mode</h3>
+    <p>To chage mode. Phong, Ambient only, Diffuse Only, Specular Only, NormalColor mode are provided.</p>
+    <p>NormalColor mode use normal vector as ambient and diffuse color. 
+  </div>
+
+  <div id="Coefficient" class="tabcontent">
+    <h3>Coefficient</h3>
+    <p>To chage Coefficient. You can learn aobut particular reflection's role in phong shading.</p>
+  </div>
+
+  <div id="Code" class="tabcontent">
+    <h3>Code</h3>
+    <p>Using provided shder code. You can implement your own phong shading.</p>
+    <p>Editing and Renadering code are not provided.</p>
+  </div>
+
+  <script>
+  function openCity(evt, cityName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(cityName).style.display = "block";
+    evt.currentTarget.className += " active";
+  }
+  </script>
+
+  <!-- canvas for WebGL -->
+  <p>
+  <canvas id="helloapicanvas" style="border: none;" width="400" height="400"></canvas>
+  
+  <!-- rotation button -->
+  <p>
+  <button onclick="animRotate()">Animation Rotate</button>
+  <button onclick="stopRotate()">Stop Rotate</button>
+  
+  <!-- mode change menue -->
+  <p>
+  <select onchange="modeChanged()" id="select_mode">
+    <option value="1">normal mode</option>
+    <option value="2">ambient only</option>
+    <option value="3">diffuse only</option>
+    <option value="4">specular only</option>
+    <option value="5">NormalColor mode</option>
+  </select>
+  
+  <!-- coefficient slider -->
+  <p>
+  <div class="slidecontainer1">
+  <p>Ambient reflection coefficient (Ka): <span id="Ka"></span></p>
+  <input type="range" min="0" max="100" value="100" id="KaSlider">
+  </div>
+
+  <script>
+  var slider = document.getElementById("KaSlider");
+  var output = document.getElementById("Ka");
+
+  slider.oninput = function() {
+  KaVal = document.getElementById("KaSlider").value / 100;
+  }
+  </script>
+
+  <div class="slidecontainer2">
+  <p>Diffuse reflection coefficient (Kd): <span id="Kd"></span></p>
+  <input type="range" min="0" max="100" value="100" id="KdSlider">
+  </div>
+
+  <script>
+  var slider = document.getElementById("KdSlider");
+  var output = document.getElementById("Kd");
+
+  slider.oninput = function() {
+  KdVal = document.getElementById("KdSlider").value / 100;
+  }
+  </script>
+
+  <div class="slidecontainer3">
+  <p>Specular reflection coefficient (Ks): <span id="Ks"></span></p>
+  <input type="range" min="0" max="100" value="100" id="KsSlider">
+  </div>
+
+  <script>
+  var slider = document.getElementById("KsSlider");
+  var output = document.getElementById("Ks");
+
+  slider.oninput = function() {
+  KsVal = document.getElementById("KsSlider").value / 100;
+  }
+  </script>
+
+  <!-- shader code viewer-->
+  <P>
+    <table border="0" class="maintable" cellpadding="3px" cellspacing="3px">
+    <tr style="vertical-align: top;">
+
+    <!-- vertex shader code -->
+    <td>Vertex shader: <br>
+      <textarea cols="80" rows="30" class="code_input_vert" id="code_vert">
+      attribute highp vec3 myVertex;
+        attribute highp vec4 myColor;
+        attribute highp vec2 myUV;
+        attribute highp vec3 myNormal;
+        attribute vec2 inputTexCoord;
+        
+        uniform mediump mat4 Pmatrix;
+        uniform mediump mat4 Vmatrix;
+        uniform mediump mat4 Mmatrix;
+        uniform mediump mat4 Nmatrix;
+        
+        varying mediump vec4 color;
+        varying mediump vec2 texCoord;
+        varying mediump vec3 normalInterp;
+        varying vec3 vertPos;
+        
+        void main(void)
+        {
+            vec4 vertPos4 = Vmatrix*vec4(myVertex, 1.0);
+            vertPos = vec3(vertPos4) / vertPos4.w;
+            normalInterp = vec3(Mmatrix * vec4(myNormal, 0.0));
+
+            gl_Position = Pmatrix*Vmatrix*Mmatrix*vec4(myVertex, 1.0);
+        };  
+      </textarea>
+      <p id="code_vert_error" style="width: 300px;"></p>
+    </td>
+
+    <!-- fragment shader code -->
+    <td>Fragment shader: <br>
+      <textarea cols="80" rows="30" class="code_input" id="code_frag">
+    precision mediump float;
+      
+        varying vec3 normalInterp;
+        varying vec3 vertPos;
+      
+        uniform int mode;
+      uniform float Ka;
+        uniform float Kd;
+        uniform float Ks;
+      
+        const vec3 lightPos = vec3(5.0,1.0,1.0);
+        const vec3 ambientColor = vec3(0.3, 0.0, 0.0);
+        const vec3 diffuseColor = vec3(0.7, 0.0, 0.0);
+      const vec3 specColor = vec3(1.0, 1.0, 1.0);
+      
+      void main() 
+      {
+          vec3 normal = normalize(normalInterp);
+          vec3 lightDir = normalize(lightPos - vertPos);
+          vec3 reflectDir = reflect(-lightDir, normal);
+          vec3 viewDir = normalize(-vertPos);
+        
+          float lambertian = max(dot(normal, lightDir), 0.0);
+          float specular = 0.0;
+        
+          if(lambertian > 0.0)
+          {
+           float specAngle = max(dot(reflectDir, viewDir), 0.0);
+           specular = pow(specAngle, 4.0);
+          }
+          gl_FragColor = vec4(Ka*ambientColor + Kd*lambertian*diffuseColor + Ks*specular*specColor, 1.0);
+          
+          if(mode == 2) gl_FragColor = vec4(Ka*ambientColor, 1.0);
+          
+          if(mode == 3) gl_FragColor = vec4(Kd*lambertian*diffuseColor, 1.0);
+          
+          if(mode == 4) gl_FragColor = vec4(Ks*specular*specColor, 1.0);
+      }
+      </textarea>
+      <p id="code_frag_error" style="width: 300px;"></p>
+    </td>
+    </tr>
+    </table>
+
+</body>
+
+</html>

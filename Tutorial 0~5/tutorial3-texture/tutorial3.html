@@ -1,0 +1,45 @@
+<!--
+WebGL 1.0 Tutorial3 - Cube Texture on/off
+
+(CC-NC-BY) 박성호 2019 
+
+
+@author 박성호
+
+참고사이트: 
+picture : https://pixabay.com/illustrations/time-design-model-stylish-product-1891569/
+base64 encoding : https://www.base64-image.de/
+-->
+
+<html>
+
+<head>
+<title>tutorial3 : Texture on cube</title>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+<script type="text/javascript" src="tutorial3.js">
+</script>
+
+
+</head>
+
+<body onload="main()">
+    <canvas id="helloapicanvas" style="border: none;" width="400" height="400"></canvas>
+	<br>
+	<button onclick="animRotate()">Animation Rotate + 0.01</button>
+	<button onclick="animPause()">Anim Pause</button>
+	<button onclick="textureOnOff()">Texture On/Off</button>
+
+	<table border=1> 
+	<tr > 
+	<td id="matrix0"> 	<td id="matrix4">  	<td id="matrix8">  	<td id="matrix12"> 
+	<tr> 
+	<td id="matrix1"> 	<td id="matrix5">  	<td id="matrix9">  	<td id="matrix13"> 
+	<tr> 
+	<td id="matrix2"> 	<td id="matrix6">  	<td id="matrix10">  	<td id="matrix14"> 
+	<tr> 
+	<td id="matrix3"> 	<td id="matrix7">  	<td id="matrix11">  	<td id="matrix15"> 
+	</table>
+</body>
+
+</html>

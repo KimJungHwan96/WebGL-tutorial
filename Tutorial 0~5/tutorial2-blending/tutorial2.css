@@ -1,0 +1,41 @@
+/*
+WebGL 1.0 Tutorial2 - Blending Cube
+
+(CC-NC-BY) Choi Ji Won 2019 
+
+
+@author Choi Ji Won
+
+참고사이트: 
+*/
+
+h1 {
+	margin-left: 5px;
+	margin-top: 10px;
+}
+
+div {
+	border: none;
+	padding: 5px;
+}
+
+th {
+	border-right: 1px solid gray;
+	border-left: 1px solid gray;
+}
+
+table {
+	border: 1px solid gray;
+	width: 500px;
+}
+
+#txt_equ, #txt_src, #txt_dst {
+	font-size: 10px;
+}
+
+#txt_code {
+	border: 1px solid gray;
+	padding: 10px;
+	margin: 5px;
+	width: 750px;
+}

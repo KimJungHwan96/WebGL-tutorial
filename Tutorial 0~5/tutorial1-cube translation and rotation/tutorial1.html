@@ -1,0 +1,90 @@
+<!--
+WebGL 1.0 Tutorial1 - Rotating and translation Cube
+
+(CC-NC-BY) JungYeun Won 2019
+
+(201620955 원정연 소프트웨어학과)
+
+@author JungYeun Won
+
+참고사이트: 
+@https://www.w3schools.com/howto/howto_js_tabs.asp
+@https://threejs.org/examples/webgl_postprocessing_afterimage.html
+-->
+
+<html>
+
+<head>
+    <title>tutorial1 : cube translation and rotation</title>
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+	<script type="text/javascript" src="tutorial1.js"></script>
+	<link rel="stylesheet" href="tutorial1.css">
+
+
+</head>
+
+<body onload="main()">
+    <H1> WebGL - Cube translation and rotation</H1>
+    <p style="width:800px">
+		This demo shows the 3D cube rotation and translation.
+	</p>
+	<br>
+	<table>
+		<tr>
+			<tr>
+				<td class="layout-td">
+					<canvas id="helloapicanvas" style="border: none;margin-top: 50px" width="500" height="500"></canvas><br><br>
+					<table border=2> 
+						<tr > 
+						<td id="matrix0"> 	<td id="matrix4">  	<td id="matrix8">  	<td id="matrix12"> 
+						<tr> 
+						<td id="matrix1"> 	<td id="matrix5">  	<td id="matrix9">  	<td id="matrix13"> 
+						<tr> 
+						<td id="matrix2"> 	<td id="matrix6">  	<td id="matrix10">  	<td id="matrix14"> 
+						<tr> 
+						<td id="matrix3"> 	<td id="matrix7">  	<td id="matrix11">  	<td id="matrix15"> 
+						</table>
+
+				</td>
+				<td class="layout-td">
+						<h3>Controls</h3>
+						<div class="tab">
+							<button class="tablinks" id="clickedBtn" onclick="openControls(event, 'Translation')">Translation</button>
+							<button class="tablinks" onclick="openControls(event, 'Rotation')">Rotation</button>
+						</div>
+
+						<div id="Translation" class="tabcontent"><br>
+							<button class="cont_btn" onclick="trXinc('+')">X + 0.1</button>
+							<button class="cont_btn" onclick="trYinc('+')">Y + 0.1</button>
+							<button class="cont_btn" onclick="trZinc('+')">Z + 0.1</button>
+							<br>
+							<button class="cont_btn" onclick="trXinc('-')">X - 0.1</button>
+							<button class="cont_btn" onclick="trYinc('-')">Y - 0.1</button>
+							<button class="cont_btn" onclick="trZinc('-')">Z - 0.1</button>
+							<br><br>
+							<p id="webTrX">Control X of the Cube</p>
+							<p id="webTrY">Control Y of the Cube</p>
+							<p id="webTrZ">Control Z of the Cube</p>
+						</div>
+						  
+						<div id="Rotation" class="tabcontent"><br>
+							<button class="cont_btn" onclick="animRotate('+')">Animation Rotate + 0.01</button><br>
+							<button class="cont_btn" onclick="animRotate('-')">Animation Rotate - 0.01</button>
+							<br>
+							<button class="cont_btn" onclick="animPause()">Animation Pause</button>
+							<br><br>
+							<input type="checkbox" name="rotAxis" value="X" checked onclick="changeRotAxis(this.value)"> X-axis 
+							<input type="checkbox" name="rotAxis" value="Y" onclick="changeRotAxis(this.value)"> Y-axis 
+							<input type="checkbox" name="rotAxis" value="Z" checked onclick="changeRotAxis(this.value)"> Z-axis 
+							<br><br>
+							<p id="animRot">Rotation speed: 0.0100</p>
+						</div>
+				</td>
+			</tr>
+		</tr>
+	</table>
+
+    <p> (CC-NC-BY) 2019 JungYeun Won </p>
+</body>
+
+</html>

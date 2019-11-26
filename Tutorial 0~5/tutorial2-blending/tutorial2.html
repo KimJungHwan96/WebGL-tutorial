@@ -1,0 +1,114 @@
+<!-- 
+WebGL 1.0 Tutorial2 - Blending Cube
+
+(CC-NC-BY) Choi Ji Won 2019 
+
+
+@author Choi Ji Won
+
+참고사이트: 
+-->
+
+<html>
+
+<head>
+	<title>tutorial2 : Blending</title>
+	<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+	<link rel="stylesheet" type="text/css" href="tutorial2.css">
+	<script type="text/javascript" src="tutorial2.js"> </script>
+</head>
+
+<body onload="main()">
+
+<h1> WebGL Blending Tutorial </h1>
+
+<div>
+	<canvas id="webglCanvas" width="400" height="400"></canvas>
+</div>
+
+<div>
+	<b>Cube rotate : </b>
+	<button onclick="animRotate()">Rotate Start</button>
+	<button onclick="animPause()">Rotate Pause</button>
+</div>
+
+<div>
+	<b>Blend : </b>
+	<input type="checkbox" id="chk_ble" checked> Enable 
+</div>
+
+<div>
+	<table>
+		<tr>
+			<th>gl.blendEquation(<i>mode</i>)</th>
+			<th>gl.blendFunc(<i><u>sfactor</u>, dfactor</i>)</th>
+			<th>gl.blendFunc(<i>sfactor, <u>dfactor</u></i>)</th>
+		</tr>
+
+		<tr>
+			<th>
+				<select id="sel_equ">
+				  <option value="FUNC_ADD" selected="selected">gl.FUNC_ADD</option>
+				  <option value="FUNC_SUBTRACT">gl.FUNC_SUBTRACT</option>
+				  <option value="FUNC_REVERSE_SUBTRACT">gl.FUNC_REVERSE_SUBTRACT</option>
+				</select>
+			</th>
+			<th>
+				<select id="sel_src">
+				  <option value="ZERO">gl.ZERO</option>
+				  <option value="ONE">gl.ONE</option>
+				  <option value="SRC_COLOR">gl.SRC_COLOR</option>
+				  <option value="ONE_MINUS_SRC_COLOR">gl.ONE_MINUS_SRC_COLOR</option>
+				  <option value="DST_COLOR">gl.DST_COLOR</option>
+				  <option value="ONE_MINUS_DST_COLOR">gl.ONE_MINUS_DST_COLOR</option>
+				  <option value="SRC_ALPHA" selected="selected">gl.SRC_ALPHA</option>
+				  <option value="ONE_MINUS_SRC_ALPHA">gl.ONE_MINUS_SRC_ALPHA</option>
+				  <option value="DST_ALPHA">gl.DST_ALPHA</option>
+				  <option value="ONE_MINUS_DST_ALPHA">gl.ONE_MINUS_DST_ALPHA</option>
+				  <option value="CONSTANT_COLOR">gl.CONSTANT_COLOR</option>
+				  <option value="ONE_MINUS_CONSTANT_COLOR">gl.ONE_MINUS_CONSTANT_COLOR</option>
+				  <option value="CONSTANT_ALPHA">gl.CONSTANT_ALPHA</option>
+				  <option value="ONE_MINUS_CONSTANT_ALPHA">gl.ONE_MINUS_CONSTANT_ALPHA</option>
+				  <option value="SRC_ALPHA_SATURATE">gl.SRC_ALPHA_SATURATE</option>
+				</select>
+			</th>
+			<th>
+				<select id="sel_dst">
+				  <option value="ZERO">gl.ZERO</option>
+				  <option value="ONE">gl.ONE</option>
+				  <option value="SRC_COLOR">gl.SRC_COLOR</option>
+				  <option value="dONE_MINUS_SRC_COLOR4">gl.ONE_MINUS_SRC_COLOR</option>
+				  <option value="DST_COLOR">gl.DST_COLOR</option>
+				  <option value="ONE_MINUS_DST_COLOR">gl.ONE_MINUS_DST_COLOR</option>
+				  <option value="SRC_ALPHA">gl.SRC_ALPHA</option>
+				  <option value="ONE_MINUS_SRC_ALPHA" selected="selected">gl.ONE_MINUS_SRC_ALPHA</option>
+				  <option value="DST_ALPHA">gl.DST_ALPHA</option>
+				  <option value="ONE_MINUS_DST_ALPHA">gl.ONE_MINUS_DST_ALPHA</option>
+				  <option value="CONSTANT_COLOR">gl.CONSTANT_COLOR</option>
+				  <option value="ONE_MINUS_CONSTANT_COLOR">gl.ONE_MINUS_CONSTANT_COLOR</option>
+				  <option value="CONSTANT_ALPHA">gl.CONSTANT_ALPHA</option>
+				  <option value="ONE_MINUS_CONSTANT_ALPHA">gl.ONE_MINUS_CONSTANT_ALPHA</option>
+				</select>
+			</th>
+		</tr>
+
+		<tr>
+			<th><div id="txt_equ">equation information</div></th>
+			<th>
+				<div id="txt_src">source information</div>
+			</th>
+			<th><div id="txt_dst">destination information</div></th>
+		</tr>
+	</table>
+</div>
+
+<div id="txt_code">
+	<b>// Code in WebGL.js (before gl.drawArrays())</b><br>
+	<span id="code_ena">gl.enable(gl.BLEND);</span><br>
+    gl.blendEquation(gl.<span id="code_mode">FUNC_ADD</span>);<br>
+	gl.blendFunc(gl.<span id="code_sfactor">SRC_ALPHA</span>, gl.<span id="code_dfactor">ONE_MINUS_SRC_ALPHA</span>);
+</div>
+
+</body>
+
+</html>
